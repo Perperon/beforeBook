@@ -95,3 +95,151 @@
 </script>
 ```
 
+##### 6、v-bind绑定的用法
+
+###### (1)、语法糖
+
+```html
+v-bind:href语法糖:href
+```
+
+###### (2)、动态绑定class
+
+I、对象语法
+
+```html
+<div id ="app">
+    <h2 >{{message}}</h2>
+    <!--第一种-->
+    <h2 v-bind:class="{active: isActive,line:isLine}">{{message}}</h2>
+    <!--第二种-->
+    <h2 :class="getClasses()">{{message}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: "实验",
+            isActive: true,
+            isLine: false
+        },
+        methods:{
+            getClasses(){
+               return {active: this.isActive,line: this.isLine};
+            }
+        }
+    });
+</script>
+```
+
+II、数组语法
+
+```html
+<div id ="app">
+    <h2 >{{message}}</h2>
+    <!--第一种-->
+    <h2 v-bind:class="[isActive,isLine]">{{message}}</h2>
+    <!--第二种-->
+    <h2 :class="getClasses()">{{message}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: "实验",
+            isActive: "open",
+            isLine: "close"
+        },
+        methods:{
+            getClasses(){
+               return [this.isActive,this.isLine]
+            }
+        }
+    });
+</script>
+```
+
+###### (3)、动态绑定style
+
+I、对象语法
+
+```html
+<div id ="app">
+    <h2 >{{message}}</h2>
+    <!--第一种-->
+    <h2 v-bind:style="{fontSize: finalSize+'px',color: finalColor}">{{message}}</h2>
+    <!--第二种-->
+    <h2 :style="getStyles()">{{message}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: "实验",
+            finalSize: 50,
+            finalColor: 'blue'
+        },
+        methods:{
+            getStyles(){
+               return {active: this.finalSize,line: this.finalColor};
+            }
+        }
+    });
+</script>
+```
+
+II、数组语法
+
+```html
+<div id ="app">
+    <h2 >{{message}}</h2>
+    <!--第一种-->
+    <h2 v-bind:style="[baseStyle,backStyle]">{{message}}</h2>
+    <!--第二种-->
+    <h2 :style="getStyle()">{{message}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: "实验",
+            baseStyle: {fontSize: '100px'},
+            backStyle: {backgroundColor: 'red'}
+        },
+        methods:{
+            getStyle(){
+               return [this.baseStyle,backStyle]
+            }
+        }
+    });
+</script>
+```
+
+##### 7、计算属性：computed
+
+I、computed属于属性计算,如果多次调用，计算属性只会调用一次
+
+```html
+<div id ="app">
+    <h2 >{{sum}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            age: 26,
+            number: 30
+        },
+        computed:{
+            sum: function(){
+                return this.age + this.number;
+            }，
+            /*sum:{ //计算属性一般没有set方法，属于只读属性，此方式和上面作用一样
+             get: function(){
+               return this.age + this.number;
+               }   
+            }*/
+        }
+    });
+</script>
+```
