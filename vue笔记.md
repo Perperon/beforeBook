@@ -492,7 +492,7 @@ II、v-show的性能更好
                 this.list.push('aaa');
                 //删除元素（删除数组最后的元素）
                 this.list.pop();
-                //删除元素（删除数组的元素）
+                //删除元素（删除数组起始的元素）
                 this.list.shift();
             }
         }
