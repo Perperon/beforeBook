@@ -95,12 +95,12 @@
 </script>
 ```
 
-##### 6、v-bind绑定的用法
+##### 6、v-bind的用法
 
 ###### (1)、语法糖
 
 ```html
-v-bind:href语法糖:href
+v-bind:href  语法糖:href
 ```
 
 ###### (2)、动态绑定class
@@ -243,3 +243,260 @@ I、computed属于属性计算,如果多次调用，计算属性只会调用一�
     });
 </script>
 ```
+
+##### 8、let与var的区别
+
+ I、var定义在if或是for块级里面没有作用域；ES5之前if和for没有作用域的概念，只有借助function的作用域来解决；
+
+II、ES6的let在if或是for块级是有作用域；ES5没有闭包，ES6有
+
+##### 9、const的使用
+
+I、const修饰的标识符为常量，不可再次赋值；建议优先使用const,需要改变标识符时才使用let
+
+```js
+const a = 20
+a =30 //错误：不可以修改再次赋值
+
+const name; //错误：const初始化标识符必须赋值
+
+//常量的含义是指向的对象不能修改，但可以改变对象内部的属性
+const obj ={
+    name: 'why',
+    age: 18
+}
+obj.name = 'kobi';
+obj.age = 52;
+```
+
+##### 10、v-on的用法
+
+###### (1)、语法糖
+
+```
+v-on:click  语法糖：@click
+```
+
+###### (2)、基本使用
+
+```html
+<div id ="app">
+    <!--用于属性-->
+    <button v-click:click="counter++">{{message}}</button>
+    <!--用于方法-->
+    <button @click="intcrement()">{{message}}</button>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            counter: 0          
+        },
+        methods:{
+            intcrement(){
+               return counter++;
+            }
+        }
+    });
+</script>
+```
+
+###### (3)、参数传递问题
+
+```html
+<div id ="app">
+    <!--无参传递-->
+    <button @click="intcrement">{{message}}</button>
+    <!--有参传递-->
+    <button @click="intcrementOne(123,'abc')">{{message}}</button>
+    <!--获取event对象-->
+    <button @click="intcrementTwo('abc',$event)">{{message}}</button>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            counter: 0          
+        },
+        methods:{
+            intcrement(){
+               return counter++;
+            }，
+            intcrementOne(num,name){
+              return console.log(num,name);
+            },
+            intcrementTwo(name,event){
+                return console.log(num,name);
+            }
+        }
+    });
+</script>
+```
+
+###### (4)、v-on的修饰符
+
+I、stop、prevent、once等修饰符的使用
+
+```html
+<div id ="app">
+    <!--stop可防止按钮冒泡系列错误-->
+    <div @click="divClick">
+        divClick
+        <button @click.stop="btnClick">按钮</button> 
+    </div>
+    <!--prevent阻止默认事件-->
+        <form action="baidu">
+            <input type="submit" value="提交" @click.prevent="submitClick">               </input>
+        </form>
+     <!--监听某个按键的点击-->
+     <!--keyup表示抬起按键触发-->
+     <input type="text" @keyup="keyup"></input> 
+     <!--keydown表示按下按键触发-->
+     <input type="text" @keydown="keydown"></input> 
+     <!--表示按下enter按键抬起时触发，其他的按键原理一致-->
+     <input type="text" @keyup.enter="keyupEnter"></input>
+
+    <!--once只触发一次事件-->
+    <button @click.once="btnClickOnce">按钮</button> 
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            counter: 0          
+        },
+        methods:{
+            divClick(){
+                console.log('divClick');
+            }，
+            btnClick(){
+               console.log('btnClick');
+            }，
+            submitClick(){
+               console.log('submitClick');
+            }，
+            keyup(){
+               console.log('keyup');
+            }，
+            keydown(){
+               console.log('keydown');
+            }，
+            keyupEnter(){
+               console.log('keyupEnter');
+            }，
+            btnClickOnce(){
+               console.log('btnClickOnce');
+            }
+        }
+    });
+</script>
+```
+
+##### 11、v-if与v-show的区别
+
+I、v-if是在面板上直接添加或是移除标签，v-show是隐藏并不删除标签
+
+II、v-show的性能更好
+
+##### 12、v-for的用法
+
+###### (1)、遍历数组
+
+```html
+<div id ="app">
+    <ul>
+        <li v-for="item in list">{{item}}</li>
+    </ul>
+    <ul>
+        <li v-for="(item,index) in list">{{item}}.{{index+1}}</li>
+    </ul>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            list: ['why','kobe']         
+        }
+    });
+</script>
+```
+
+###### (2)、对象遍历
+
+```html
+<div id ="app">
+    <ul>
+        <li v-for="item in list">{{item}}</li>
+    </ul>
+    <ul>
+        <li v-for="(value,key) in list">{{value}}-{{key}}</li>
+    </ul>
+     <ul>
+        <li v-for="(value,key,index) in list">{{value}}-{{key}}-{{index}}</li>
+    </ul>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            list: {
+                name: 'kidi',
+                age: 29
+            } 
+        }
+    });
+</script>
+```
+
+###### (3)、绑定与非绑定key得运用
+
+```html
+<div id ="app">
+    <!--在集合中间插入元素下标与对应得值不会变-->
+    <ul>
+        <li v-for="item in list" :key='item'>{{item}}</li>
+    </ul>
+    <ul>
+        <li v-for="(item,index) in list">{{item}}.{{index+1}}</li>
+    </ul>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            list: ['why','kobe']         
+        }
+    });
+</script>
+```
+
+##### 13、数组的响应式函数
+
+```html
+<div id ="app">
+    <!--在集合中间插入元素下标与对应得值不会变-->
+    <ul>
+        <li v-for="item in list" :key='item'>{{item}}</li>
+    </ul>
+    <button @click="btnClick"></button>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            list: ['why','kobe']         
+        },
+        methods:{
+            btnClick(){
+                //添加元素
+                this.list.push('aaa');
+                //删除元素（删除数组最后的元素）
+                this.list.pop();
+                //删除元素（删除数组的元素）
+                this.list.shift();
+            }
+        }
+    });
+</script>
+```
+
