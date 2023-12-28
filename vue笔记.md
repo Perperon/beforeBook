@@ -233,7 +233,7 @@ I、computed属于属性计算,如果多次调用，计算属性只会调用一�
         computed:{
             sum: function(){
                 return this.age + this.number;
-            }，
+            },
             /*sum:{ //计算属性一般没有set方法，属于只读属性，此方式和上面作用一样
              get: function(){
                return this.age + this.number;
@@ -368,22 +368,22 @@ I、stop、prevent、once等修饰符的使用
         methods:{
             divClick(){
                 console.log('divClick');
-            }，
+            },
             btnClick(){
                console.log('btnClick');
-            }，
+            },
             submitClick(){
                console.log('submitClick');
-            }，
+            },
             keyup(){
                console.log('keyup');
-            }，
+            },
             keydown(){
                console.log('keydown');
-            }，
+            },
             keyupEnter(){
                console.log('keyupEnter');
-            }，
+            },
             btnClickOnce(){
                console.log('btnClickOnce');
             }
