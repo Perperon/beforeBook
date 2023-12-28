@@ -321,7 +321,7 @@ v-on:click  语法糖：@click
         methods:{
             intcrement(){
                return counter++;
-            }，
+            },
             intcrementOne(num,name){
               return console.log(num,name);
             },
@@ -473,6 +473,7 @@ II、v-show的性能更好
 ##### 13、数组的响应式函数
 
 ```html
+<!--响应式函数，点击事件可实时同步数组数据显示在界面上-->
 <div id ="app">
     <!--在集合中间插入元素下标与对应得值不会变-->
     <ul>
@@ -494,6 +495,101 @@ II、v-show的性能更好
                 this.list.pop();
                 //删除元素（删除数组起始的元素）
                 this.list.shift();
+                //在数组最前面添加元素
+                this.list.shift();
+                //可用来删除元素、插入元素、替换元素
+                //第一个参数是你要操作的起始位置
+                //删除元素：第二个参数是用于你要删除几个元素
+                this.list.splice(start,number);
+                //替换元素：第二个参数是用于你要替换几个元素。后面的参数是你要替换的元素
+                this.list.splice(start,3,'a','b','c');
+                //添加元素：第二个参数为0
+                this.list.splice(start,0,'a','b','c');
+                //排序
+                this.list.sort();
+                //反转
+                this.list.reverse();
+            }
+        }
+    });
+</script>
+```
+
+##### 14、js的高阶函数运用
+
+###### (1)、filter的使用
+
+```js
+const nums = [100,12,25,59,78,125,79,85,200];
+//filter中的回调函数需要返回一个boolean值
+//true:元素加入新的数组
+//false:过滤掉该元素
+let newnums = nums.filter(function(n){
+    return n<100;
+});
+console.log(newnums);
+```
+
+###### (2)、map的使用
+
+```js
+const nums = [100,12,25,59,78,125,79,85,200];
+//map用于对数组的加工运算，逻辑处理
+let newnums = nums.map(function(n){
+   return n * 2; 
+});
+console.log(newnums);
+```
+
+###### (3)、reduce的使用
+
+```js
+const nums = [100,12,25,59,78,125,79,85,200];
+//reduce可用于对数组的汇总运算
+//第二参数是初始化值
+//preValue是上一次返回的值，n是nums数组里面遍历的元素
+let total = nums.reduce(function(preValue,n){
+   return preValue + n; 
+},0);
+console.log(total);
+
+//结合以上函数使用
+let totalNum = nums.filter(function(n){
+    return n<100;
+}).map(function(n){
+   return n * 2; 
+}).reduce(function(preValue,n){
+   return preValue + n; 
+},0);
+//console.log(totalNum);
+//或者
+let totalNum = nums.filter(n => n<100).map(n => n*2).reduce((pre,n) => pre + n);
+console.log(totalNum);
+```
+
+##### 15、v-model双向绑定
+
+###### (1)、基本运用及原理
+
+```html
+<div id ="app">
+    <input type="text" v-model="message"/> 
+    <h2>{{message}}</h2>
+    <!--双向绑定原理-->
+    <!--valueUpdate没参数而方法有参数，默认参数传递的是event对象，相当于valueUpdate($event)-->
+    <input type="text" :value="msg" v-on:input="valueUpdate"/>	
+    <input type="text" :value="msg" @input="msg=$event.target.value"/>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: 'hello',
+            msg: 'world'
+        },
+        methods:{
+            valueUpdate(event){
+                this.msg = event.target.value;
             }
         }
     });
