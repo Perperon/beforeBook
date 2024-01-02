@@ -596,3 +596,93 @@ console.log(totalNum);
 </script>
 ```
 
+###### (2)、结合radio
+
+```html
+<div id ="app">
+    <label for="male">
+      <input type="radio" v-model="sex" id="male" value="男" name="sex"/>男 
+    </label>
+    <label for="female">
+      <input type="radio" v-model="sex" id="female" value="女" name="sex"/>女
+    </label>
+    <h2>{{sex}}</h2>        
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            sex: null
+        },
+        methods:{
+            
+        }
+    });
+</script>
+```
+
+###### (3)、结合checkbox
+
+```html
+<div id ="app">
+    <!--单选运用-->
+    <label for="agree">
+      <input type="checkbox" v-model="isAgree" id="agree" name="agree"/>男 
+    </label>
+    <h2>{{isAgree}}</h2> 
+    <button :disabled="!isAgree">下一步</button>
+    
+    <!--多选运用-->
+    <input type="checkbox" v-model="hobbies" name="hobbies" value="篮球"/>篮球
+    <input type="checkbox" v-model="hobbies" name="hobbies" value="足球"/>足球
+    <input type="checkbox" v-model="hobbies" name="hobbies" value="排球"/>排球
+    <input type="checkbox" v-model="hobbies" name="hobbies" value="乒乓球"/>乒乓球
+    <h2>{{hobbies}}</h2> 
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            isAgree: false,
+            hobbies: []
+        }
+    });
+</script>
+```
+
+###### (4)、结合select
+
+```html
+<div id ="app">
+    <!--单选-->
+    <select name="fruit" v-model="fruit">
+        <option value="苹果">苹果</option>
+        <option value="香蕉">香蕉</option>
+        <option value="榴莲">榴莲</option>
+        <option value="葡萄">葡萄</option>
+    </select>
+    <h2>{{fruits}}</h2>
+    
+    <!--多选-->
+    <select name="fruits" v-model="fruits" multiple>
+        <option value="苹果">苹果</option>
+        <option value="香蕉">香蕉</option>
+        <option value="榴莲">榴莲</option>
+        <option value="葡萄">葡萄</option>
+    </select>
+    <h2>{{fruits}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            fruits: null,
+            fruit: null
+        },
+        methods:{
+            
+        }
+    });
+</script>
+```
+
