@@ -333,7 +333,7 @@ v-on:click  语法糖：@click
 </script>
 ```
 
-###### (4)、v-on的修饰符
+###### (4)、v-on的常用修饰符
 
 I、stop、prevent、once等修饰符的使用
 
@@ -711,11 +711,240 @@ console.log(totalNum);
 </script>
 ```
 
-###### (6)、修饰符的使用
+###### (6)、常用修饰符的使用
 
 I、lazy可以让数据在失去焦点或回车会更新
 
 II、number让输入的类型必须是数值类型
 
 III、trim去点输入框界面上空格，也自动去掉对象空格
+
+```html
+<div id ="app">  
+    <!--lazy修饰符-->
+    <input type="text" v-model.lazy="message" name="message"/>男       
+    <h2>{{message}}</h2>
+    
+    <!--number修饰符-->
+    <input type="text" v-model.number="age" name="age"/>男       
+    <h2>{{age}}</h2>
+    
+    <!--trim修饰符-->
+    <input type="text" v-model.trim="name" name="name"/>男       
+    <h2>{{name}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null,
+            age: 0,
+            name: '   helloworld'
+        },
+        methods:{
+            
+        }
+    });
+</script>
+```
+
+#### 二、Vue的组件化
+
+##### 1、基本用法
+
+```html
+<div id ="app"> 
+    <!--使用组件-->
+    <my-msg></my-msg>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+    //创建组件构造器对象
+    const viewVue = Vue.extend({
+        template: `
+           <div>
+              <h2>测试</h2>
+              <h2>hello</h2>
+              <h2>world</h2>
+           </div>`
+    });
+    //注册组件
+    Vue.component('my-msg',viewVue);
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null
+        }      
+    });
+</script>
+```
+
+##### 2、全局组件与局部组件
+
+```html
+<div id ="app"> 
+    <!--使用组件-->
+    <my-msg></my-msg>
+</div>
+<div id ="app2"> 
+    <!--使用组件-->
+    <my-msg></my-msg>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+    //创建组件构造器对象
+    const viewVue = Vue.extend({
+        template: `
+           <div>
+              <h2>测试</h2>
+              <h2>hello</h2>
+              <h2>world</h2>
+           </div>`
+    });
+    //注册组件(全局组件)
+    //Vue.component('my-msg',viewVue);
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null
+        }      
+    });
+    
+    let app2 = new Vue({
+        el: '#app2',
+        data: {
+            message: null
+        },
+        components: {//注册组件(局部组件)
+            my-msg: viewVue
+        }
+    });
+</script>
+```
+
+##### 3、父组件与子组件区分
+
+```html
+<div id ="app"> 
+    <!--使用组件-->
+    <cpn2></cpn2>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+    //创建第一个组件构造器对象
+    const cpnC1 = Vue.extend({
+        template: `
+           <div>
+              <h2>test</h2>
+              <h2>message</h2>
+              <h2>这是个测试</h2>
+           </div>`
+    });
+    //创建第二个组件构造器对象
+    const cpnC2 = Vue.extend({
+        template: `
+           <div>
+              <h2>测试</h2>
+              <h2>hello</h2>
+              <h2>world</h2>
+              <cpn1></cpn1> 
+           </div>`,  
+        components:{
+            cpn1: cpnC1 //调用第一个组件，cpn1成为子组件
+        }
+    });
+    
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null
+        },
+        components:{
+            cpn2: cpnC2 //如果还需单独使用cpn1组件的话，需要在这里注册
+        }
+    });
+</script>
+```
+
+##### 4、注册组件语法糖
+
+```html
+<div id ="app"> 
+    <!--使用组件-->
+    <cpn1></cpn1>
+    <cpn2></cpn2>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+    //注册组件(全局组件)
+    Vue.component('cpn1',{
+        template: `
+           <div>
+              <h2>测试</h2>
+              <h2>hello</h2>
+              <h2>world</h2>
+           </div>`
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null
+        },
+        components:{
+            'cpn2': { //注册组件(局部组件)
+                template: `
+                   <div>
+                      <h2>test</h2>
+                      <h2>love</h2>
+                      <h2>person</h2>
+                   </div>`
+            }
+        }
+    });
+</script>
+```
+
+##### 5、组件模板抽离
+
+```html
+<div id ="app"> 
+    <!--使用组件-->
+    <cpn1></cpn1>
+    <cpn2></cpn2>
+</div>
+<script src="../js/vue.js"></script>
+<!--第一种-->
+<script type="text/x-template" id="cpn1">
+   <div>
+      <h2>测试</h2>
+      <h2>hello</h2>
+      <h2>world</h2>
+   </div>
+</script>
+<!--第二种-->
+<template id="cpn2">
+   <div>
+      <h2>test</h2>
+      <h2>kotlin</h2>
+      <h2>java</h2>
+   </div>
+</template>
+<script>
+    //注册组件(全局组件)
+    Vue.component('cpn1',{
+        template: `#cpn1`
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null
+        },
+        components:{
+            'cpn2': { //注册组件(局部组件)
+                template: `#cpn2`
+            }
+        }
+    });
+</script>
+```
 
