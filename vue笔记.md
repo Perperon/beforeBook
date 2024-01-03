@@ -686,3 +686,36 @@ console.log(totalNum);
 </script>
 ```
 
+###### (5)、值绑定
+
+```html
+<div id ="app">
+    <!--多选-->
+    <label v-for="item in hobbies" :for="item">
+        <input type="checkbox" v-model="loves" name="loves" :value="item" :id="item">{{item}}
+    </label>
+    
+    <h2>{{fruits}}</h2>
+</div>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            hobbies: ['篮球','足球','羽毛球','排球','铅球'],
+            loves: []
+        },
+        methods:{
+            
+        }
+    });
+</script>
+```
+
+###### (6)、修饰符的使用
+
+I、lazy可以让数据在失去焦点或回车会更新
+
+II、number让输入的类型必须是数值类型
+
+III、trim去点输入框界面上空格，也自动去掉对象空格
+
