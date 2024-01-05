@@ -948,3 +948,152 @@ III、trim去点输入框界面上空格，也自动去掉对象空格
 </script>
 ```
 
+##### 6、组件的data函数
+
+I、组件有自己单独的属性的数据data，而不是放在Vue实例的data中
+
+II、组件的data属性必须是一个函数且需要返回一个对象，对象内部保存着数据
+
+```html
+<div id ="app"> 
+    <!--组件实例-->
+    <cpn></cpn>
+    <cpn></cpn>
+</div>
+<template id="cpn">
+   <div>
+       <h2>
+           当前计数：{{counter}}
+       </h2>
+       <button @click="incre"></button>
+       <button @click="decre"></button>
+    </div>
+</template>
+<script src="../js/vue.js"></script>
+<script>
+    //注册组件(全局组件)
+    Vue.component('cpn',{
+        template: `#cpn`,
+        data(){ //为何data必须为函数，就是因为组件可在多个地方使用，生成了不同的实例，所以必须用函数
+           return{
+               counter: 0
+           }
+        },
+        methods:{
+            incre(){
+                this.counter++
+            },
+            decre(){
+                this.counter--
+            }
+        }
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: null
+        }
+    });
+</script>
+```
+
+##### 7、父子组件通信props
+
+I、通过proprs向子组件传递数据
+
+```html
+<div id ="app"> 
+    <!--组件实例-->
+    <cpn :cmessage="message" v-bind:clist="list"></cpn>
+</div>
+<template id="cpn">
+   <div>
+       <h2>{{cmessage}}</h2>
+       <ul>
+           <li v-for="item in clist">{{item}}</li>
+       </ul>
+    </div>
+</template>
+<script src="../js/vue.js"></script>
+<script>
+    //注册组件(全局组件)
+    Vue.component('cpn',{
+        template: `#cpn`,
+        props:{
+            cmessage:{
+                type: String,
+                default: ''
+            },
+            clist:{
+                type: Array,
+                default(){
+                    return{}
+                }
+            }
+        },
+        data(){ 
+           return{
+             
+           }
+        }
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递',
+            list: ['苹果','香蕉','橘子']
+        }
+    });
+</script>
+```
+
+II、通过自定义事件向父组件发送消息
+
+III、props的驼峰标识
+
+```html
+<div id ="app"> 
+    <!--props的驼峰标识规则-->
+    <cpn :c-message="message" v-bind:c-list="list"></cpn>
+</div>
+<template id="cpn">
+   <div>
+       <h2>{{cMessage}}</h2>
+       <ul>
+           <li v-for="item in cList">{{item}}</li>
+       </ul>
+    </div>
+</template>
+<script src="../js/vue.js"></script>
+<script>
+    //注册组件(全局组件)
+    Vue.component('cpn',{
+        template: `#cpn`,
+        props:{
+            cMessage:{
+                type: String,
+                default: ''
+            },
+            cList:{
+                type: Array,
+                default(){
+                    return{}
+                }
+            }
+        },
+        data(){ 
+           return{
+             
+           }
+        }
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递',
+            list: ['苹果','香蕉','橘子']
+        }
+    });
+</script>
+```
+
