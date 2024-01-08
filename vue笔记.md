@@ -997,9 +997,9 @@ II、组件的data属性必须是一个函数且需要返回一个对象，对�
 </script>
 ```
 
-##### 7、父子组件通信props
+##### 7、父子组件通信props与$emit()
 
-I、通过proprs向子组件传递数据
+I、通过props向子组件传递数据
 
 ```html
 <div id ="app"> 
@@ -1049,6 +1049,55 @@ I、通过proprs向子组件传递数据
 
 II、通过自定义事件向父组件发送消息
 
+```html
+<div id ="app"> 
+    <cpn @item-click="cpnClick"></cpn>
+</div>
+<template id="cpn">
+   <div>
+       <button v-for="item in list" @click="btnClick(item)">
+           {{item}}
+       </button>
+    </div>
+</template>
+<script src="../js/vue.js"></script>
+<script>
+    let cpn = {
+        template: `#cpn`,
+        data(){
+            return{
+               list:[
+                    {id:1,name:'热门商品'},
+                    {id:2,name:'其他商品'},
+                    {id:3,name:'必须商品'},
+                    {id:4,name:'新上商品'}
+               ] 
+        }
+      },
+        methods:{
+            btnClick(item){
+                //发射事件，传消息给父组件:自定义事件
+                this.$emit('item-click',item);//子组件中，通过$emit()来触发事件，父组件通过v-on来监听子组件事件
+            }
+        }
+    }
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递'
+        },
+        components:{
+            cpn
+        },
+        methods:{
+            cpnClick(item){
+                console.log('打印',item);
+            }
+        }
+    });
+</script>
+```
+
 III、props的驼峰标识
 
 ```html
@@ -1096,4 +1145,135 @@ III、props的驼峰标识
     });
 </script>
 ```
+
+IIII、双向绑定案例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>父子组件的双向绑定</title>
+</head>
+<body>
+<div id ="app">
+    <cpn v-model="message"></cpn>
+    <!--  等同于上面所示  -->
+    <cpn :value="message" @input="messageData"></cpn>
+</div>
+<template id="cpn">
+    <div>
+        <h2>{{value}}</h2>
+        <input type="text" :value="value" @input="updateValue"/>
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    //注册组件(全局组件)
+    Vue.component('cpn',{
+        template: `#cpn`,
+        props:{
+            value:{
+                type: String,
+                default: ''
+            }
+        },
+        data(){
+            return{
+            }
+        },
+        methods: {
+            updateValue(event){
+                let value = event.target.value;
+                this.$emit('input',value);
+            }
+        }
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: ''
+        },
+        methods:{
+            messageData(value){
+                this.message = value;
+                console.log(value);
+            }
+        }
+    });
+</script>
+</html>
+```
+
+IIIII、双向绑定案例-watch监听实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>父子组件的双向绑定-watch监听实现</title>
+</head>
+<body>
+<div id ="app">
+    <form-input v-model="message"></form-input>
+    <!--  等同于上面所示  -->
+    <form-input :value="message" @input="messageData" placeholder="这是一个测试" ></form-input>
+</div>
+<template id="cpn">
+    <div>
+        <h2>{{value}}</h2>
+        <input type="text" :placeholder="placeholder" v-model="value"/>
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    //注册组件(全局组件)
+    Vue.component('form-input',{
+        template: `#cpn`,
+        props:{
+            value:{
+                type: String,
+                default: ''
+            },
+            placeholder:{
+                type: String,
+                default: '请输入信息'
+            }
+        },
+        data(){
+            return{
+            }
+        },
+        watch: {
+            value(newValue,oldValue){
+                this.$emit('input',newValue);
+            }
+        }
+    });
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: ''
+        },
+        methods:{
+            messageData(value){
+                this.message = value;
+                console.log(value);
+            }
+        }
+    });
+</script>
+</html>
+```
+
+##### 8、父子组件的访问方式
+
+###### (1)、父组件访问子组件$children与$refs.reference
+
+
+
+###### (2)、子组件访问父组件$parent
 
