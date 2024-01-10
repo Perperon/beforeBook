@@ -999,7 +999,7 @@ II、组件的data属性必须是一个函数且需要返回一个对象，对�
 
 ##### 7、父子组件通信props与$emit()
 
-I、通过props向子组件传递数据
+###### (1)、通过props向子组件传递数据
 
 ```html
 <div id ="app"> 
@@ -1047,7 +1047,7 @@ I、通过props向子组件传递数据
 </script>
 ```
 
-II、通过自定义事件向父组件发送消息
+###### (2)、通过自定义事件向父组件发送消息
 
 ```html
 <div id ="app"> 
@@ -1098,7 +1098,7 @@ II、通过自定义事件向父组件发送消息
 </script>
 ```
 
-III、props的驼峰标识
+###### (3)、props的驼峰标识
 
 ```html
 <div id ="app"> 
@@ -1146,7 +1146,7 @@ III、props的驼峰标识
 </script>
 ```
 
-IIII、双向绑定案例
+###### (4)、双向绑定案例
 
 ```html
 <!DOCTYPE html>
@@ -1206,7 +1206,7 @@ IIII、双向绑定案例
 </html>
 ```
 
-IIIII、双向绑定案例-watch监听实现
+###### (5)、双向绑定案例-watch监听实现
 
 ```html
 <!DOCTYPE html>
@@ -1273,7 +1273,489 @@ IIIII、双向绑定案例-watch监听实现
 
 ###### (1)、父组件访问子组件$children与$refs.reference
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>父组件访问子组件</title>
+</head>
+<body>
+<div id ="app">
+    <cpn></cpn>
+    <cpn></cpn>
+    <cpn ref="compent"></cpn>
+    <button @click="btnClick">测试</button>
+</div>
+<template id="cpn">
+    <div>
+        <h2>测试数据传递</h2>
+        <button @click="showMessage">按钮</button>
+        <input ref="input" :value="value" @input="updateValue">
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递'
+        },
+        methods:{ //可通过$children与$refs获取组件的属性和方法
+            btnClick(){
+                /*for(let i of this.$children){//$children返回相同标签的所有数组
+                    console.log(i.name);
+                    console.log(i.showMessage());
+                }*/
+                console.log(this.$refs.compent);//通过$refs与ref="xxx"准确定位一个标签
+                console.log(this.$refs.compent.name);
+                console.log(this.$refs.compent.showMessage());
+            }
+        },
+        components:{
+            cpn:{
+                template: '#cpn',
+                props:{
+                    value:{
+                        type: String,
+                        default() {
+                            return '';
+                        }
+                    }
+                },
+                data(){
+                    return{
+                        name: '杜彭'
+                    }
+                },
+                methods:{
+                    showMessage(){
+                        console.log('测试');
+                    },
+                    updateValue(value){
+                        this.$emit("input",value);
+                    }
+                },
+                mounted(){
+                    //console.log(this.$refs.input);
+                    console.log(this.$el);
+                }
+            }
+        }
+    });
+</script>
+</html>
+```
+
 
 
 ###### (2)、子组件访问父组件$parent
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>子组件访问父组件</title>
+</head>
+<body>
+<div id ="app">
+    <cpn></cpn>
+</div>
+<template id="cpn">
+    <div>
+        <button @click="cpnClick">按钮1</button>
+        <ccpn></ccpn>
+    </div>
+</template>
+<template id="ccpn">
+    <div>
+        <h2>测试数据传递</h2>
+        <button @click="btnClick">按钮2</button>
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递'
+        },
+        components:{
+            cpn:{
+                template: '#cpn',
+                data(){
+                    return{
+                        name: '杜彭'
+                    }
+                },
+                methods: {
+                    cpnClick() {
+                        console.log(this.$parent);
+                        console.log(this.$parent.message);
+                    }
+                },
+                components: {
+                    ccpn:{
+                        template: '#ccpn',
+                        methods:{
+                            btnClick(){
+                                console.log(this.$parent);
+                                console.log(this.$parent.name);//获取父级组件的属性与方法
+                                
+                                console.log(this.$root); //获取根组件
+                                console.log(this.$root.message);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+</html>
+```
+
+##### 9、插槽的使用
+
+###### (1)、基本使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>slot的使用</title>
+</head>
+<body>
+<div id ="app">
+    <cpn></cpn>
+    <cpn><label>变体：</label><a href="http://www.baidu.com">百度一下</a></cpn><!--替换默认标签-->
+</div>
+<template id="cpn">
+    <div>
+        <h2>测试数据传递</h2>
+        <slot><button @click="showMessage">按钮</button></slot><!--插槽slot的作用是自由插入所需增加的标签，使组件复用性更高,可设置默认标签-->
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递'
+        },
+        methods:{
+
+        },
+        components:{
+            cpn:{
+                template: '#cpn',
+                data(){
+                    return{
+                        name: '杜彭'
+                    }
+                },
+                methods: {
+                    showMessage(){
+                        console.log("showMessage");
+                    }
+                }
+            }
+        }
+    });
+</script>
+</html>
+```
+
+###### (2)、具名插槽的使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>slot的使用</title>
+</head>
+<body>
+<div id ="app">
+    <cpn>
+        <span slot="left">这是一asdasd</span>
+        <span slot="center">这是一个cesium</span>
+        <span slot="center">这是一sdfdsfium</span></cpn>
+    <cpn>
+        <div slot="left">
+        <label>变体：</label>
+        <a href="http://www.baidu.com">百度一下</a>
+        </div></cpn><!--替换默认标签-->
+</div>
+<template id="cpn">
+    <div>
+        <h2>测试数据传递</h2>
+        <slot name="left"><span>左边</span></slot><!--插槽slot的作用是自由插入所需增加的标签，使组件复用性更高,可设置默认标签-->
+        <slot name="center"><span>中间</span></slot><!--多个插槽的使用-->
+        <slot name="right"><span>右边</span></slot>
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: '测试数据传递'
+        },
+        components:{
+            cpn:{
+                template: '#cpn',
+                methods: {
+                    showMessage(){
+                        console.log("showMessage");
+                    }
+                }
+            }
+        }
+    });
+</script>
+</html>
+```
+
+###### (3)、作用域插槽
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>slot作用域插槽的使用</title>
+</head>
+<body>
+<div id ="app">
+    <cpn></cpn>
+    <cpn>
+        <template slot-scope="slot">
+            <span>{{slot.data.join(' - ')}}</span><!--父组件替换插槽的默认标签，但是数据内容由子组件来提供-->
+        </template>
+    </cpn>
+</div>
+<template id="cpn">
+    <div>
+        <slot :data="languages"><!--:data也可以是其他的名称-->
+            <ul>
+                <li v-for="item on languages">{{item}}</li>
+            </ul>
+        </slot>
+    </div>
+</template>
+</body>
+<script src="../js/vue.min.js"></script>
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: ''
+        },
+        components:{
+            cpn:{
+                template: '#cpn',
+                data(){
+                    return{
+                        languages: ['java','c++','golang','c#']
+                    }
+                }
+            }
+        }
+    });
+</script>
+</html>
+```
+
+#### 三、前端模块化
+
+##### 1、CommonJS模块化
+
+```js
+//如：nodejs与webpack使用
+//CommonJS的导出
+module.exports = {
+    flag: true,
+    test(a,b){
+        return a+b;
+    }
+}
+
+//CommonJS的导入 
+let {flag,test} = require('文件路径');
+```
+
+##### 2、ES6的模块化
+
+```js
+//如：webpack使用，webpack依赖nodejs
+let name = 'pengcheng';
+let age = 23;
+function sum(num1,num2){
+   return num1+ num2;
+}
+if(flag){
+    console.log(sum(20,30));
+}
+//方式一
+//可导出类、函数、属性
+export class Person{
+    run(){
+       console.log('ssss'); 
+    }
+}
+//方式二
+//导出 
+export{
+   flag,sum,age
+}
+
+//方式三
+//默认导出 注意：在同一个模块中只能有一个默认导出
+export default function (){
+    console.log('saddgfdg'); 
+}
+
+//导入
+import {flag,sum,age,Person} from "文件路径"
+//默认导入 名字自定义命名
+import func from '文件路径'
+//统一导入
+import * as list from '文件路径'
+```
+
+##### 3、webpack的使用
+
+I、webpack是一个现代的javascript应用的静态模块打包工具,依赖nodejs
+
+###### (1)、环境搭建安装
+
+I、安装全局webpack
+
+```properties
+npm install webpack@3.6.0 -g
+```
+
+II、安装局部webpack
+
+```properties
+npm install webpack@3.6.0 --save-dev   #--save-dev表示开发时依赖，打包后不需要webpack
+```
+
+III、在终端执行webpack命令，使用的是全局安装的webpack；当在package.json中的scripts定义时了webpack命令时，使用的时局部webpack
+
+###### (2)、webpack基本使用
+
+I、utils.js创建
+
+```js
+//CommonJs模块化
+function add(num1,num2){
+    return num1 + num2;
+}
+function del(num1,num2){
+    return num1 - num2;
+}
+module.exports ={
+    add,del
+}
+```
+
+II、info.js创建
+
+```js
+export let name = 'pengcheng';
+export function func(num1,num2){
+    return num1 * num2;
+}
+```
+
+III、main.js创建
+
+```js
+const {add,del} = require('./utils');
+console.log(add(20,30));
+console.log(del(20,30));
+import {name,func} from './info.js';
+console.log(name);
+console.log(func(20,30));
+```
+
+IIII、index.html创建
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+    <div id ="app">
+
+    </div>
+</body>
+<script src="./dist/bundle.js"></script>
+
+</html>
+```
+
+IIIII、使用命令编译打包
+
+```properties
+webpack ./src/main.js ./dist/bundle.js
+```
+
+###### (3)、进阶：配置文件
+
+I、webpack.config.js配置
+
+```js
+//这是nodejs里面的包 需要npm init初始化项目
+const path = require('path')
+module.exports = {
+    //入口
+    entry: './src/main.js',
+    //出口
+    output:{
+        path: path.resolve(_dirname,'dist'),//拿到绝对路径
+        filename: 'bundle.js'
+    }
+}
+```
+
+II、使用命令编译打包
+
+```properties
+webpack
+```
+
+III、package.json配置
+
+```json
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "build": "webpack" //配置编译打包命令
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+```
+
+IIII、命令编译打包
+
+```properties
+npm run build
+```
 
