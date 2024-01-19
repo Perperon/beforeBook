@@ -577,7 +577,7 @@ console.log(totalNum);
     <h2>{{message}}</h2>
     <!--双向绑定原理-->
     <!--valueUpdate没参数而方法有参数，默认参数传递的是event对象，相当于valueUpdate($event)-->
-    <input type="text" :value="msg" v-on:input="valueUpdate"/>	
+    <input type="text" :value="msg" v-on:input="valueUpdate"/>    
     <input type="text" :value="msg" @input="msg=$event.target.value"/>
 </div>
 <script>
@@ -615,7 +615,7 @@ console.log(totalNum);
             sex: null
         },
         methods:{
-            
+
         }
     });
 </script>
@@ -631,7 +631,7 @@ console.log(totalNum);
     </label>
     <h2>{{isAgree}}</h2> 
     <button :disabled="!isAgree">下一步</button>
-    
+
     <!--多选运用-->
     <input type="checkbox" v-model="hobbies" name="hobbies" value="篮球"/>篮球
     <input type="checkbox" v-model="hobbies" name="hobbies" value="足球"/>足球
@@ -662,7 +662,7 @@ console.log(totalNum);
         <option value="葡萄">葡萄</option>
     </select>
     <h2>{{fruits}}</h2>
-    
+
     <!--多选-->
     <select name="fruits" v-model="fruits" multiple>
         <option value="苹果">苹果</option>
@@ -680,7 +680,7 @@ console.log(totalNum);
             fruit: null
         },
         methods:{
-            
+
         }
     });
 </script>
@@ -694,7 +694,7 @@ console.log(totalNum);
     <label v-for="item in hobbies" :for="item">
         <input type="checkbox" v-model="loves" name="loves" :value="item" :id="item">{{item}}
     </label>
-    
+
     <h2>{{fruits}}</h2>
 </div>
 <script>
@@ -705,7 +705,7 @@ console.log(totalNum);
             loves: []
         },
         methods:{
-            
+
         }
     });
 </script>
@@ -724,11 +724,11 @@ III、trim去点输入框界面上空格，也自动去掉对象空格
     <!--lazy修饰符-->
     <input type="text" v-model.lazy="message" name="message"/>男       
     <h2>{{message}}</h2>
-    
+
     <!--number修饰符-->
     <input type="text" v-model.number="age" name="age"/>男       
     <h2>{{age}}</h2>
-    
+
     <!--trim修饰符-->
     <input type="text" v-model.trim="name" name="name"/>男       
     <h2>{{name}}</h2>
@@ -742,7 +742,7 @@ III、trim去点输入框界面上空格，也自动去掉对象空格
             name: '   helloworld'
         },
         methods:{
-            
+
         }
     });
 </script>
@@ -809,7 +809,7 @@ III、trim去点输入框界面上空格，也自动去掉对象空格
             message: null
         }      
     });
-    
+
     let app2 = new Vue({
         el: '#app2',
         data: {
@@ -853,7 +853,7 @@ III、trim去点输入框界面上空格，也自动去掉对象空格
             cpn1: cpnC1 //调用第一个组件，cpn1成为子组件
         }
     });
-    
+
     let app = new Vue({
         el: '#app',
         data: {
@@ -1033,7 +1033,7 @@ II、组件的data属性必须是一个函数且需要返回一个对象，对�
         },
         data(){ 
            return{
-             
+
            }
         }
     });
@@ -1132,7 +1132,7 @@ II、组件的data属性必须是一个函数且需要返回一个对象，对�
         },
         data(){ 
            return{
-             
+
            }
         }
     });
@@ -1348,8 +1348,6 @@ II、组件的data属性必须是一个函数且需要返回一个对象，对�
 </html>
 ```
 
-
-
 ###### (2)、子组件访问父组件$parent
 
 ```html
@@ -1404,7 +1402,7 @@ II、组件的data属性必须是一个函数且需要返回一个对象，对�
                             btnClick(){
                                 console.log(this.$parent);
                                 console.log(this.$parent.name);//获取父级组件的属性与方法
-                                
+
                                 console.log(this.$root); //获取根组件
                                 console.log(this.$root.message);
                             }
@@ -1709,7 +1707,7 @@ IIII、index.html创建
 IIIII、使用命令编译打包
 
 ```properties
-webpack ./src/main.js ./dist/bundle.js
+webpack ./src/main.js ./dist/bundle.js #将mian.js中的源码、引用以及引用文件的引用一起打包为bundle.js里面
 ```
 
 ###### (3)、进阶：配置文件
@@ -1745,7 +1743,7 @@ III、package.json配置
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "build": "webpack" //配置编译打包命令
+     "build": "webpack" //配置编译打包命令，也可写一个配置文件然后引用
   },
   "author": "",
   "license": "ISC",
@@ -1756,6 +1754,253 @@ III、package.json配置
 IIII、命令编译打包
 
 ```properties
-npm run build
+npm run build #代替webpack
+```
+
+###### (4)、css文件配置
+
+I、安装css的loader
+
+```properties
+npm install --save-dev css-loader   #具体其他类型文件loader安装可去webpack官网文档查看
+npm install --save-dev style-loader #style-loader 与 css-loader 一起使用
+```
+
+II、配置webpack.config.js文件
+
+```js
+module.exports = {
+  //加入css配置
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+          //css-loader只负责加载，不负责解析，style-loader负责解析到DOM中 
+          //多个loader是从右往左读
+        use: ["style-loader", "css-loader"]
+      },
+    ],
+  },
+};
+```
+
+III、style.css文件创建
+
+```css
+body {
+  background: green;
+}
+```
+
+IIII、引入你的css样式文件
+
+```js
+import "./style.css";   #然后可用npm run build打包了  其他文件也是类似操作
+```
+
+
+
+```js
+//其他步骤与css文件引入相似
+const path = require('path')
+module.exports = {
+    
+}
+```
+
+###### (5)、图片文件配置
+
+I、安装图片的loader
+
+```properties
+npm install --save-dev url-loader
+```
+
+II、引入文件
+
+```js
+import img from './image.png'
+```
+
+III、配置webpack.config.js文件
+
+```js
+module.exports = {
+    //入口
+    entry: './src/main.js',
+    //出口
+    output:{
+        path: path.resolve(_dirname,'dist'),//拿到绝对路径
+        filename: 'bundle.js',
+        publicPath: 'dist/' //打包过后页面能访问到编译后图片，需配置publicPath
+    }，
+  //加入url配置
+  module: {
+    rules: [
+       {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        use:[
+          {
+            loader: 'url-loader',
+            options: {
+             //大于limit时，使用file-loader模块进行加载
+             //小于limit时，使用base64字符串进行加载
+              limit: 10000, 
+              name: 'img/[name].[hash:7].[ext]' //给图片配置别名
+            }
+            
+          }
+        ]      
+      }
+    ]
+  }
+};
+```
+
+###### (6)、ES6转ES5的babel配置
+
+I、安装处理的loader
+
+```properties
+npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
+```
+
+II、配置webpack.config.js文件
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.m?js$/,
+      exclude: /(node_modules|bower_components)/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['es2015']
+        }
+      }
+    }
+  ]
+}
+```
+
+##### 4、webpack配置Vue
+
+###### (1)、配置环境
+
+I、安装Vue
+
+```properties
+npm install --save vue
+```
+
+II、导入vue
+
+```js
+import Vue from 'vue'
+```
+
+III、配置webpack.config.js文件
+
+```js
+module.exports = {
+   resolve:{
+     alias:{ //别名
+        ‘vue$’:'vue/dist/vue.esm.js' //默认使用vue.runtime.js,没有编译template的境，需要重新指定
+     }
+   }
+}
+```
+
+###### (2)、vue的template与el的关系
+
+I、template里面定义的页面标签会覆盖el定义的id标签
+
+###### (3)、vue在模块化的使用
+
+I、安装vue的相关loader
+
+```properties
+npm install vue-loader vue-template-conpiler --save-dev    #14版本以上需要配置
+```
+
+II、配置webpack.config.js文件
+
+```js
+module:{
+    rules:[
+        {
+            test: /\.vue$/,
+            use: ['vue-loader']
+        }
+    ]
+}
+```
+
+III、创建index.html页面入口
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>mall-admin-web</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
+
+```
+
+
+
+IIII、创建main.js
+
+```js
+import Vue from 'vue'
+import App from './App'
+new Vue({
+  el: '#app',
+  template: '<App/>', //组件引用
+  components: { App } //App.vue文件实现组件
+})
+
+```
+
+IIIII、创建App.vue文件
+
+```vue
+<template>
+  <div>
+    <h2 class="title">{{message}}</h2>
+    <button @click="btnClick">
+        按钮
+    </button>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'App',
+    data(){
+        return{
+            message: 'hello'
+        }
+    },
+    methods:{
+        btnClick(){
+            console.log("hello");
+        }
+    }
+  }
+</script>
+
+<style>
+    .title{
+        color: red;
+    }
+</style>
+
 ```
 
