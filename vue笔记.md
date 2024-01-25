@@ -2004,7 +2004,7 @@ module.exports = {
    resolve:{
      extensions: ['.js','.css','.vue'] //引用后缀名省略
      alias:{ //别名
-        ‘vue$’:'vue/dist/vue.esm.js' //默认使用vue.runtime.js,没有编译template的环境，需要重新指定
+        'vue$':'vue/dist/vue.esm.js' //默认使用vue.runtime.js,没有编译template的环境，需要重新指定
      }
    }
 }
