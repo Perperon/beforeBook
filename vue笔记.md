@@ -1798,13 +1798,11 @@ IIII、引入你的css样式文件
 import "./style.css";   #然后可用npm run build打包了  其他文件也是类似操作
 ```
 
-
-
 ```js
 //其他步骤与css文件引入相似
 const path = require('path')
 module.exports = {
-    
+
 }
 ```
 
@@ -1848,7 +1846,7 @@ module.exports = {
               limit: 10000, 
               name: 'img/[name].[hash:7].[ext]' //给图片配置别名
             }
-            
+
           }
         ]      
       }
@@ -1906,7 +1904,7 @@ III、配置webpack.config.js文件
 module.exports = {
    resolve:{
      alias:{ //别名
-        ‘vue$’:'vue/dist/vue.esm.js' //默认使用vue.runtime.js,没有编译template的境，需要重新指定
+        ‘vue$’:'vue/dist/vue.esm.js' //默认使用vue.runtime.js,没有编译template的环境，需要重新指定
      }
    }
 }
@@ -1921,7 +1919,7 @@ I、template里面定义的页面标签会覆盖el定义的id标签
 I、安装vue的相关loader
 
 ```properties
-npm install vue-loader vue-template-conpiler --save-dev    #14版本以上需要配置
+npm install vue-loader vue-template-compiler --save-dev    #14版本以上需要配置插件
 ```
 
 II、配置webpack.config.js文件
@@ -1950,10 +1948,7 @@ III、创建index.html页面入口
     <div id="app"></div>
   </body>
 </html>
-
 ```
-
-
 
 IIII、创建main.js
 
@@ -1965,7 +1960,6 @@ new Vue({
   template: '<App/>', //组件引用
   components: { App } //App.vue文件实现组件
 })
-
 ```
 
 IIIII、创建App.vue文件
@@ -2001,6 +1995,20 @@ IIIII、创建App.vue文件
         color: red;
     }
 </style>
-
 ```
+
+IIIIII、引入省略后缀配置
+
+```js
+module.exports = {
+   resolve:{
+     extensions: ['.js','.css','.vue'] //引用后缀名省略
+     alias:{ //别名
+        ‘vue$’:'vue/dist/vue.esm.js' //默认使用vue.runtime.js,没有编译template的环境，需要重新指定
+     }
+   }
+}
+```
+
+##### 5、webpack的plugin使用
 
