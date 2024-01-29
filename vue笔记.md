@@ -2012,3 +2012,212 @@ module.exports = {
 
 ##### 5、webpack的plugin使用
 
+###### (1)、横幅版权plugin
+
+I、配置webpack.config.js配置文件
+
+```js
+const webpack = require('webpack')
+module.exports = {
+  plugins: [
+    new webpack.BannerPlugin('最终版权归xxx所有')
+  ]
+}
+```
+
+###### (2)、打包html的plugin
+
+I、安装插件
+
+```properties
+npm install html-webpack-plugin --save-dev
+```
+
+II、配置webpack.config.js配置文件
+
+```js
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+module.exports = {
+    //入口
+    entry: './src/main.js',
+    //出口
+    output:{
+        path: path.resolve(_dirname,'dist'),//拿到绝对路径
+        filename: 'bundle.js',
+        //publicPath: 'dist/' //使用html-webpack-plugin可注释掉publicPath，html-webpack-plugin会自动创建一个index.html，并引入js
+    }，
+  plugins: [
+    new HtmlWebpackPlugin({
+        template: 'index.html' //会找到当前目录下的index.html文件为模板生成自己的index.html
+})
+  ]
+}
+```
+
+###### (3)、js压缩的plugin
+
+I、安装插件
+
+```properties
+npm install uglifyjs-webpack-plugin@1.1.1 --save-dev
+```
+
+II、配置webpack.config.js配置文件
+
+```js
+const UglifyjsjsPlugin = require('uglifyjs-webpack-plugin')
+module.exports = {
+  plugins: [
+    new UglifyjsjsPlugin()
+  ]
+}
+```
+
+##### 6、webpack搭建测试服务器
+
+###### (1)、安装测试服务
+
+```properties
+npm install webpack-dev-server@2.9.1 --save-dev
+```
+
+###### (2)、配置webpack.config.js
+
+```js
+module.exports = {
+ devServer: {
+     contentBase: './dist',
+     inline: true, //是否实时监听，
+     port: 8011 //指定端口
+ }
+}
+```
+
+###### (3)、配置package.json
+
+```json
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack", //配置编译打包命令，也可写一个配置文件然后引用
+    "dev": "webpack-dev-server --open" //open是启动时打开页面进行预览
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+```
+
+###### (4)、执行启动服务命令
+
+```properties
+npm run dev
+```
+
+##### 7、webpack配置文件分离
+
+###### (1)、创建三个配置文件
+
+```properties
+base.config.js  //基础配置  prod.config.js //发布配置  dev.config.js  //测试配置  //在build文件夹里面创建
+```
+
+
+
+###### (2)、安装配置文件插件
+
+```properties
+npm install webpack-merge --save-dev
+```
+
+###### (3)、dev.config.js配置
+
+```js
+const baseConfig = require('./base.config')
+const webpackMerge = require('webpack-merge')
+module.exports =webpackMerge(baseConfig,{
+ devServer: {
+     contentBase: './dist',
+     inline: true, //是否实时监听，
+     port: 8011 //指定端口
+ }
+}) 
+```
+
+###### (4)、prod.config.js配置
+
+```js
+const UglifyjsjsPlugin = require('uglifyjs-webpack-plugin')
+const webpackMerge = require('webpack-merge')
+const baseConfig = require('./base.config')
+module.exports =webpackMerge(baseConfig,{
+  plugins: [
+    new UglifyjsjsPlugin() //发布的需要压缩js文件
+  ]
+}) 
+```
+
+###### (5)、配置package.json
+
+```json
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config ./build/prod.config.js", //指定配置编译打包使用配置环境文件prod.config.js
+    "dev": "webpack-dev-server --open --config ./build/dev.config.js" //指定配置编译打包使用配置环境文件
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+```
+
+###### (6)、base.config.js配置
+
+```js
+const path = require('path')
+module.exports = {
+    //入口
+    entry: './src/main.js',
+    //出口
+    output:{
+        path: path.resolve(_dirname,'../dist'),//配置打包到该文件的上一级上
+        filename: 'bundle.js'
+    }
+}
+```
+
+#### 四、vue-cli脚手架
+
+##### 1、vue-cli的安装
+
+###### (1)、安装vue-cli3
+
+```properties
+npm install -g @vue/cli   #vue-cli依赖node.js与webpack  #这是脚手架3的安装方式
+```
+
+###### (2)、兼容vue-cli2
+
+```properties
+npm install -g @vue/cli-init #可使用该命令使vue-cli2兼容vue-cli3版本,可使用vue-cli的模板
+```
+
+###### (3)、vue-cli2初始化项目
+
+```properties
+vue init webpack 项目名 #创建项目
+```
+
+###### (4)、vue-cli3初始化项目
+
+```properties
+vue create 项目名 #创建项目
+```
+
