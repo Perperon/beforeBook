@@ -2125,8 +2125,6 @@ npm run dev
 base.config.js  //基础配置  prod.config.js //发布配置  dev.config.js  //测试配置  //在build文件夹里面创建
 ```
 
-
-
 ###### (2)、安装配置文件插件
 
 ```properties
@@ -2219,5 +2217,41 @@ vue init webpack 项目名 #创建项目
 
 ```properties
 vue create 项目名 #创建项目
+```
+
+###### (5)、项目文件作用解析
+
+```gfm
+.babelrc  # 用于适配各种浏览器的配置以及es6转es5
+.editorconfig  #编辑代码保存时格式调整配置
+.gitignore  #git提交代码远程忽略那些个文件及文件夹
+.eslintignore  #忽略一些文件中的代码不规范
+.postcssrc.js  #css转化的所需配置文件
+.gitkeep  #不管业务文件为不为空，都是能git上远程上
+```
+
+##### 2、compiler与only的区别
+
+###### (1)、compiler的运行轨迹
+
+```js
+import Vue from 'vue'
+import App from './App'
+new Vue({
+    el: '#app',
+    template: '<App/>',
+    components: {App}  //compiler:解析template转换为ast树，编译ast过后通过render函数实现虚拟dom，最后在页面展示UI
+})
+```
+
+###### (2)、only的运行轨迹
+
+```js
+import Vue from 'vue'
+import App from './App'
+new Vue({
+    el: '#app',
+    render: h ->h(App) //only:通过render函数实现虚拟dom，直接在页面展示UI；这个运行更快打包更小
+})
 ```
 
