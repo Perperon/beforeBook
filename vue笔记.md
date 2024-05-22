@@ -2270,3 +2270,111 @@ vue create 项目名 #创建项目
       自定义vue.config.js文件进行修改文件
 ```
 
+##### 4、vue-router路由
+
+###### (1)、采用方式
+
+```properties
+url的hash路由：
+location.hash='foo'
+```
+
+```properties
+HTML5的history路由：
+history.pushState({},'','foo') 或 history.forward()等同于history.go(1) #入栈
+history.back() 等同于 history.go(-1) #出栈
+history.go(sum) 也可连续出多个栈
+history.replaceState({},'','foo') 表示替换前一个栈
+```
+
+###### (2)、路由配置
+
+```vue
+<template>
+<div>
+  <h1>首页</h1>
+  <h2>欢迎使用</h2>
+  <p>vue-cli</p>
+</div>
+</template>
+
+<script>
+export default {
+  name: "home"
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+```js
+//在src目录下创建router目录，以及创建index.js文件
+import Vue from 'vue'
+import Router from 'vue-router'
+import home from '@/components/home'
+import about from '@/components/about'
+//使用路由插件
+Vue.use(Router)
+const routes =[
+  {
+    path: '/about',
+    name: 'home',
+    component: home
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: about
+  }
+]
+const router = new Router({
+  routes
+})
+//导出
+export default router
+
+```
+
+```js
+//引入router
+import Vue from 'vue'
+import App from './App'
+import router from './router'
+
+Vue.config.productionTip = false
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router,
+  render: h => h(App)
+})
+
+```
+
+```vue
+<template>
+  <div id="app">
+      <router-link to="/home"></router-link>
+      <router-link to="/about"></router-link>
+      <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App'
+}
+</script>
+
+<style>
+
+</style>
+
+```
+
