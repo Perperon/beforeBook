@@ -2204,7 +2204,7 @@ npm install -g @vue/cli   #vue-cli依赖node.js与webpack  #这是脚手架3的�
 ###### (2)、兼容vue-cli2
 
 ```properties
-npm install -g @vue/cli-init #可使用该命令使vue-cli2兼容vue-cli3版本,可使用vue-cli的模板
+npm install -g @vue/cli-init #可使用该命令使vue-cli3兼容vue-cli2版本,可使用vue-cli2的模板
 ```
 
 ###### (3)、vue-cli2初始化项目
@@ -2261,5 +2261,13 @@ new Vue({
 
 ```properties
 vue create 项目名 #创建项目
+```
+
+###### (2)、环境配置方式
+
+```properties
+方式一：vue ui #使用GUI界面进行查看配置与修改配置
+方式二：node_modules的@vue/cli-service的webpack.config.js进行查看配置
+      自定义vue.config.js文件进行修改文件
 ```
 
