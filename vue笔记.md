@@ -2783,9 +2783,10 @@ export default router
     <router-link :to="'/about/'+params" tag="button">关于</router-link>
 
     <router-link :to="{path: '/profile',query:{name: '李白',age: 36}}" tag="button">文档</router-link>
-    <keep-alive> <!--路由其他页面，继续让当前页保持活跃，当跳回该页面时，还保持当时的场景页面-->
+      <!--keep-alive有两属性：exclude与include，exclude用于排除组件是否缓存，include用于包含-->
+      <keep-alive exclude="Profile,User"> <!--路由其他页面，继续让当前页保持活跃，当跳回该页面时，还保持当时的场景页面-->
        <router-view/>
-    </keep-alive>
+    </keep-alive><!--配合钩子函数可实现，列如：beforeRouteLeave-->
   </div>
 </template>
 
@@ -2799,5 +2800,58 @@ export default {
   }
 }
 </script>
+```
+
+```vue
+<template>
+    <div>
+        <h3>这是我的首页</h3>
+        <router-link to="/home/news" tag="button">新闻</router-link>
+        <router-link to="/home/message" tag="button">消息</router-link>
+        <router-view/>
+    
+        
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    name: 'Home',
+    data(){
+        return{
+            path: '/home/news'
+        }
+    },
+    //创建构子函数
+    created(){
+        console.log('created')
+    },
+    //销毁钩子函数
+    destroyed(){
+        console.log('destroyed')
+    },
+    //这两个函数在使用keep-alive标签时，才会生效
+    //活跃时执行
+    activated(){
+        this.$router.push(this.path)
+        console.log('activeted')
+    },
+    //关闭活跃时执行
+    deactivated(){
+        console.log('deactiveted')
+    },
+    //离开之前执行
+    beforeRouteLeave(to,from,next){
+        console.log(this.$route.path);
+        this.path = this.$route.path;
+        next()
+    }
+  }
+  </script>
+  
+  <style>
+
+  </style>
+  
 ```
 
