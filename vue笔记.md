@@ -2272,7 +2272,7 @@ vue create 项目名 #创建项目
 
 ##### 4、vue-router路由
 
-###### (1)、采用方式
+###### (1)、采用路由方式
 
 ```properties
 url的hash路由：
@@ -2360,8 +2360,8 @@ new Vue({
 ```vue
 <template>
   <div id="app">
-      <router-link to="/home"></router-link>
-      <router-link to="/about"></router-link>
+      <router-link to="/home">首页</router-link>
+      <router-link to="/about">关于</router-link>
       <router-view/>
   </div>
 </template>
@@ -2376,5 +2376,428 @@ export default {
 
 </style>
 
+```
+
+###### (3)、更改路由方式
+
+```js
+//在index.js文件中添加mode属性修改
+const router = new Router({
+  routes,
+  mode: 'history' //采用history方式路由，默认为hash模式
+})
+```
+
+###### (4)、router-link的属性
+
+```vue
+<!--to:用于指定跳转的路径-->
+<router-link to="/home">首页</router-link>
+<!--tag:用于渲染成其他标签，默认问a标签-->
+<router-link to="/home" tag="button">首页</router-link>
+<!--replace:不会留下history痕迹，后退不能退回上一个页面上-->
+<router-link to="/home" tag="button" replace>首页</router-link>
+<!--active-class:增加你的自定义样式-->
+<router-link to="/home" tag="button" replace active-class='active'>首页</router-link>
+<style>
+    .active:{
+        color: red
+    }
+</style>
+//在路由的index.js文件中统一设置
+const router = new Router({
+  routes,
+  linkActiveClass: 'active'
+  mode: 'history' //采用history方式路由，默认为hash模式
+})
+```
+
+###### (5)、通过代码跳转路由
+
+```vue
+<template>
+  <div id="app">
+    <button @click="btnHome">首页</button>
+    <button @click="btnAbout">关于</button>
+    <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  methods:{
+      btnHome(){
+        //this.$router.push('/home'); //通过history.pushState(null,'','/home')方式
+        this.$router.replace('/home'); //通过history.replaceState(null,'','/home')方式
+      },
+      btnAbout(){
+        //this.$router.push('/about');
+        this.$router.replace('/about');
+      }
+  }
+}
+</script>
+
+<style>
+   .active{
+    color: #b91010;
+  }
+</style>
+
+```
+
+###### (6)、动态路由
+
+```js
+const routes =[
+  {
+    path: '/',
+    redirect: '/home', //首页重定向
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: home
+  },
+  {
+    path: '/about/:name', //设置动态路由标识name(任意名称)
+    name: 'about',
+    component: about
+  }
+]
+```
+
+```vue
+<template>
+  <div id="app">
+     <!--补充具体路径（libing）-->
+    <router-link :to="'/about/'+params" tag="button">关于</router-link>
+    <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+    name: 'App',
+    data(){
+    return{
+      params: 'wode'
+    }
+    }
+}
+</script>
+
+<style>
+</style>
+
+```
+
+```vue
+<template>
+<div>
+  <h1>about</h1>
+  <p>about asfssasad</p>
+  <p>{{name}}</p>
+</div>
+</template>
+
+<script>
+export default {
+  name: "about",
+  data(){
+    return{
+      name: this.$route.params.name  //可使用this.$route.params.name 获取动态路由名
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+###### (7)、打包文件解析
+
+```tex
+app.xxx.js  #属于项目的业务代码
+manifest.xxx.js #属于代码解析执行的底层支撑
+vendor.xxx.js #属于第三方的插件
+```
+
+###### (8)、router路由的懒加载
+
+```js
+#路由到某个页面时再加载相关的代码，也就是需要时再加载
+import Vue from 'vue'
+import Router from 'vue-router'
+
+Vue.use(Router)
+
+const Home = () => import('../components/home')
+const routes =[
+  {
+    path: '/',
+    redirect: '/home', //首页重定向
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: Home //使用router的懒加载
+  },
+  {
+    path: '/about/:name',
+    name: 'about',
+    component: () => import('../components/about') //使用router的懒加载
+  }
+]
+const router = new Router({
+  routes,
+  linkActiveClass: 'active', //统一设置路由按键样式
+  mode: 'history' //采用history方式路由，默认为hash模式
+})
+
+export default router
+
+
+```
+
+###### (9)、router路由的嵌套
+
+```vue
+<template>
+  <div>
+    <ur>
+      <li>这是一个新的News</li>
+      <li>这是一个新的News</li>
+      <li>这是一个新的News</li>
+      <li>这是一个新的News</li>
+    </ur>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "News"
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+```vue
+<template>
+<div>
+  <h1>首页</h1>
+  <h2>欢迎使用</h2>
+  <p>vue-cli</p>
+  <router-link to="/home/news" tag="button">新闻</router-link>
+  <router-link to="/home/message" tag="button">消息</router-link>
+  <router-view/>
+</div>
+</template>
+
+<script>
+export default {
+  name: "Home"
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+```js
+const routes =[
+  {
+    path: '/',
+    redirect: '/home', //首页重定向，默认路径
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: () => import('../components/home/Home'), //使用router的懒加载
+    children:[ //使用子组件
+      {
+        path: '', 
+        redirect:'news' //默认路径
+      },
+      {
+        path: 'news', //不要用斜杠'/'
+        name: 'news',
+        component: News
+      },
+      {
+        path: 'message', //不要用斜杠'/'
+        name: 'message',
+        component: Message
+      }
+    ]
+  },
+  {
+    path: '/about/:name',
+    name: 'about',
+    component: () => import('../components/about')
+  }
+]
+```
+
+###### (10)、router路由传递参数
+
+```vue
+<!--第一种传递方式-->
+<template>
+  <div id="app">
+    <router-link to="/home" tag="button">首页</router-link>
+    <!--动态路由传递，使用拼接传递参数，$route.params.<路径预留名>获取值，前面有案例-->
+    <router-link :to="'/about/'+params" tag="button">关于</router-link>
+     <!--通过对象传递，使用query传递参数，$route.query获取对象，$route.query.<属性取出具体的值>-->
+    <router-link :to="{path: '/profile',query:{name: '李白',age: 36}}" tag="button">文档</router-link>
+    <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  data(){
+    return{
+      params: 'wode'
+    }
+  }
+}
+</script>
+
+```
+
+```vue
+<!--第二种传递方式-->
+<template>
+  <div id="app">
+    <button @click="aboutClick">关于</button>
+    <button @click="profileClick">文档</button>
+    <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  data(){
+    return{
+      params: 'wode'
+    }
+  },
+  methods:{
+       aboutClick(){
+           this.$router.push('/about'+this.params)
+       },
+      aboutClick(){
+           this.$router.push({path: '/profile',query:{name: '李白',age: 36}})
+       } 
+  }
+}
+</script>
+```
+
+###### (11)、router全局导航守卫
+
+```js
+import Vue from 'vue'
+import Router from 'vue-router'
+
+Vue.use(Router)
+const News = () => import('../components/home/components/News')
+const Message = () => import('../components/home/components/Message')
+const routes =[
+  {
+    path: '/',
+    redirect: '/home', //首页重定向
+  },
+  {
+    path: '/home',
+    name: 'home',
+    meta:{title: '首页', icon: 'home'},
+    component: () => import('../components/home/Home'), //使用router的懒加载
+    children:[
+      {
+        path: '',
+        redirect:'news' //默认路径
+      },
+      {
+        path: 'news', //不要用斜杠'/'
+        name: 'news',
+        meta:{title: '新闻', icon: 'home'},
+        component: News
+      },
+      {
+        path: 'message', //不要用斜杠'/'
+        name: 'message',
+        meta:{title: '消息', icon: 'home'},
+        component: Message
+      }
+    ]
+  },
+  {
+    path: '/about/:name',
+    name: 'about',
+    meta:{title: '关于', icon: 'home'},
+    component: () => import('../components/about')
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    meta:{title: '文档', icon: 'home'},
+    component: () => import('../components/profile')
+  }
+]
+const router = new Router({
+  routes,
+  linkActiveClass: 'active', //统一设置路由按键样式
+  mode: 'history' //采用history方式路由，默认为hash模式
+})
+router.beforeEach( (to, from, next)=>{
+  //获取全局导航命名
+  document.title =to.matched[0].meta.title
+  next(); //必须重写这个next,不然路由不能跳转
+})
+export default router
+
+
+```
+
+###### (12)、keep-alive标签
+
+```vue
+<!--第一种传递方式-->
+<template>
+  <div id="app">
+    <router-link to="/home" tag="button">首页</router-link>
+    <router-link :to="'/about/'+params" tag="button">关于</router-link>
+
+    <router-link :to="{path: '/profile',query:{name: '李白',age: 36}}" tag="button">文档</router-link>
+    <keep-alive> <!--路由其他页面，继续让当前页保持活跃，当跳回该页面时，还保持当时的场景页面-->
+       <router-view/>
+    </keep-alive>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  data(){
+    return{
+      params: 'wode'
+    }
+  }
+}
+</script>
 ```
 
