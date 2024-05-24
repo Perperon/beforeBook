@@ -2855,3 +2855,28 @@ export default {
   
 ```
 
+##### 5、配置文件路径别名
+
+###### (1)、配置别名
+
+```js
+//webpack.base.conf.js下配置
+resolve: {
+    extensions: ['.js', '.vue', '.json'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve('src'),
+      'assets': resolve('src/assets'), //起别名
+      'components': resolve('src/components'),
+      'views': resolve('src/views'),
+      'icons': resolve('src/icons')
+    }
+  },
+```
+
+###### (2)、标签引用
+
+```html
+<img slot="item-icon" src="~icons/svg/home.svg"> //需加上‘~’前缀
+```
+
