@@ -2880,3 +2880,119 @@ resolve: {
 <img slot="item-icon" src="~icons/svg/home.svg"> //需加上‘~’前缀
 ```
 
+#### 五、Promise的运用
+
+##### 1、promise的作用
+
+###### (1)、功能
+
+```text
+用于封装处理异步请求
+```
+
+###### (2)、基本运用
+
+```js
+//使用Promise进行异步操作
+//第一种写法
+new Promise((resolve,reject) => {
+    setTimeout(()=>{
+        //请求成功时调用resolve
+        resolve('测试成功')
+        //失败时调用reject
+        reject('测试失败')
+    },1000)
+}).then((date) =>{
+    //成功时运行
+    console.log(data);
+}).catch((err) =>{
+    //失败时运行
+    console.log(err);
+})
+
+//第二种写法
+new Promise((resolve,reject) => {
+    setTimeout(()=>{
+        //请求成功时调用resolve
+        resolve('测试成功')
+        //失败时调用reject
+        reject('测试失败')
+    },1000)
+}).then(date =>{
+    //成功时运行
+    console.log(data);
+},err =>{
+    console.log(err);
+})
+```
+
+##### 2、promise的状态
+
+```tex
+pending //等待状态
+fulfill //满足状态  调用resolve处理
+reject  //拒绝状态  调用reject处理
+```
+
+##### 3、promise的链式调用
+
+```js
+//使用Promise进行异步操作
+new Promise((resolve,reject) => {
+    setTimeout(()=>{
+        //请求成功时调用resolve
+        resolve('测试成功')
+        //失败时调用reject
+        reject('测试失败')
+    },1000)
+}).then((date) =>{
+    //成功时运行
+    console.log(data + '第一层');
+    return new Promise((resolve)=>{
+        resolve(data)
+    })
+}).then(res =>{
+    console.log(res+'第二层');
+    //成功简洁写法
+    return Promise.resolve(res) //等同于new Promise((resolve)=>{resolve(data)})
+}).then(res =>{
+    console.log(res+'第三层');
+   return res  //等同于Promise.resolve(res)
+}).then(res =>{
+    console.log(res+'第四层');
+    //thows 'error message' // 也可这样表达 
+   return Promise.reject('error message')  //等同于new Promise((resolve,reject)={reject(data)})
+}).catch((err) =>{
+    //失败时运行
+    console.log(err);
+})
+```
+
+##### 4、promise的all使用
+
+```js
+//all,让多个请求返回一个请求数据集合，进行统一处理
+Promise.all([
+    new Promise((resolve,reject) => {
+    setTimeout(()=>{
+        resolve('测试成功')
+    },2000)
+    }),
+    new Promise((resolve,reject) => {
+    setTimeout(()=>{
+        resolve('测试成功')
+    },1000)
+    })
+]).then(results=>{
+    console.log(results) //打印结果集
+})
+```
+
+#### 六、Vuex的使用
+
+##### 1、vuex的概念与作用
+
+```tex
+vuex是一个专门为vue.js应用程序开发做状态管理的，相当于所有组件的状态的大管家
+```
+
