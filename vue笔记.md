@@ -3155,10 +3155,17 @@ const store = new  Vuex.Store({
       moreStu(state){
         return state.students.filter(item=> item.age >= 19)
       },
-        //传递参数，重用moreStu方法
+        //传递getters参数，重用moreStu方法
       moreStuParams(state,getters){
         return getters.moreStu.filter(item=> item.sex === '男')
-      }
+      },
+     //实现动态传参，由用户传递
+     moreStudentAge(state){
+        //return function (age) {
+          //return state.students.filter(item=> item.age >= age)
+        //}
+         return age => state.students.filter(item=> item.age >= age)
+     }
     },
     modules:{
 
@@ -3179,7 +3186,9 @@ export default store
     <h2>{{$store.getters.moreStu}}</h2>
     <h2>{{$store.getters.moreStuParams}}</h2>
     <h2>{{$store.getters.powerCounter}}</h2>
-    <hello-vuex />
+   输入年龄：<input type="text" v-model="age">
+    <h2>{{$store.getters.moreStudentAge(age)}}</h2>
+    <hello-vuex :age="age"/>
   </div>
 </template>
 
@@ -3187,6 +3196,11 @@ export default store
 import HelloVuex from "./components/HelloVuex"
 export default {
   name: 'App',
+  data(){
+   return{
+    age: null
+   }
+  },
   components: {
     HelloVuex
   },
@@ -3215,12 +3229,16 @@ export default {
       <h2>{{$store.getters.moreStu}}</h2>
       <h2>{{$store.getters.moreStuParams}}</h2>
       <h2>{{$store.getters.powerCounter}}</h2>
+      <h2>{{$store.getters.moreStudentAge(age)}}</h2>
     </div>
   </template>
 
   <script>
   export default {
-    name: 'HelloVuex'
+    name: 'HelloVuex',
+    props: {
+     age: Number
+    }
   }
   </script>
 
