@@ -2996,3 +2996,237 @@ Promise.all([
 vuex是一个专门为vue.js应用程序开发做状态管理的，相当于所有组件的状态的大管家
 ```
 
+##### 2、vuex的简单运用
+
+```js
+// npm install vuex@3 --save 引入
+//创建store文件夹，创建index.js文件
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new  Vuex.Store({
+    //保存状态
+    state:{
+         counter: 1000
+    },
+    //state里面的属性需用mutations来改变
+    mutations:{
+       incr(state){
+         state.counter++
+       },
+      decr(state){
+        state.counter--
+      }
+    },
+    //异步操作actions
+    actions:{
+
+    },
+    //使用getters定义方法来调用计算或逻辑结果
+    getters:{
+
+    },
+    //划分模块
+    modules:{
+
+    }
+})
+
+export default store
+
+```
+
+```js
+//main.js中导入
+import Vue from 'vue'
+import App from './App'
+import store from './store'
+
+Vue.config.productionTip = false
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  store,
+  render: h => h(App)
+})
+
+```
+
+```vue
+<template>
+    <div>
+        <!--获取vuex中state管理的数据-->
+        <span>{{this.$store.state.counter}}</span>
+    </div>
+  </template>
+
+  <script>
+  export default {
+    name: 'HelloVuex'
+  }
+  </script>
+
+  <style>
+
+  </style>
+
+```
+
+```vue
+<!--浏览器安装vue的devtools插件可进行调试-->
+<template>
+  <div id="app">
+    <h2>{{this.$store.state.counter}}</h2>
+    <button @click="addCounter">+</button>
+    <button @click="delCounter">-</button>
+    <hello-vuex />
+  </div>
+</template>
+
+<script>
+import HelloVuex from "./components/HelloVuex"
+export default {
+  name: 'App',
+  components: {
+    HelloVuex
+  },
+  methods: {
+    addCounter(){
+      //使用vuex中的mutations中定义的方法改变counter的属性
+      this.$store.commit("incr")
+    },
+    delCounter(){
+      this.$store.commit("decr")
+    }
+  }
+}
+</script>
+
+<style>
+</style>
+
+```
+
+##### 3、vuex-getters的运用
+
+```js
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new  Vuex.Store({
+    state:{
+         counter: 0,
+         students:[{
+             name:'张三',
+             age:18,
+             sex:'男'
+         },{
+             name:'李四',
+             age:19,
+             sex:'女'
+         },{
+             name:'王五',
+             age:20,
+             sex:'男'
+         }]
+    },
+    mutations:{
+       incr(state){
+         state.counter++
+       },
+      decr(state){
+        state.counter--
+      }
+    },
+    actions:{
+
+    },
+    getters:{
+        //使用getters计算
+       powerCounter(state){
+         return state.counter * 2
+       },
+        //筛选对象集方法
+      moreStu(state){
+        return state.students.filter(item=> item.age >= 19)
+      },
+        //传递参数，重用moreStu方法
+      moreStuParams(state,getters){
+        return getters.moreStu.filter(item=> item.sex === '男')
+      }
+    },
+    modules:{
+
+    }
+})
+
+export default store
+
+```
+
+```vue
+<template>
+  <div id="app">
+    <h1>vue组件</h1>
+    <h2>{{this.$store.state.counter}}</h2>
+    <button @click="addCounter">+</button>
+    <button @click="delCounter">-</button>
+    <h2>{{$store.getters.moreStu}}</h2>
+    <h2>{{$store.getters.moreStuParams}}</h2>
+    <h2>{{$store.getters.powerCounter}}</h2>
+    <hello-vuex />
+  </div>
+</template>
+
+<script>
+import HelloVuex from "./components/HelloVuex"
+export default {
+  name: 'App',
+  components: {
+    HelloVuex
+  },
+  methods: {
+    addCounter(){
+      this.$store.commit("incr")
+    },
+    delCounter(){
+      this.$store.commit("decr")
+    }
+  }
+}
+</script>
+
+<style>
+</style>
+
+```
+
+```vue
+<!--HelloVuex组件-->
+<template>
+    <div>
+        <h1>Hello Vuex</h1>
+        <span>{{this.$store.state.counter}}</span>
+      <h2>{{$store.getters.moreStu}}</h2>
+      <h2>{{$store.getters.moreStuParams}}</h2>
+      <h2>{{$store.getters.powerCounter}}</h2>
+    </div>
+  </template>
+
+  <script>
+  export default {
+    name: 'HelloVuex'
+  }
+  </script>
+
+  <style>
+
+  </style>
+
+```
+
