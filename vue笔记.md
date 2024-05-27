@@ -3164,7 +3164,7 @@ const store = new  Vuex.Store({
         //return function (age) {
           //return state.students.filter(item=> item.age >= age)
         //}
-         return age => state.students.filter(item=> item.age >= age)
+         return age => {return state.students.filter(item=> item.age >= age)}
      }
     },
     modules:{
@@ -3246,5 +3246,355 @@ export default {
 
   </style>
 
+```
+
+##### 4、vuex-mutations状态更新运用
+
+###### (1)、定义mutations的相关函数
+
+```js
+// npm install vuex@3 --save 引入
+//创建store文件夹，创建index.js文件
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new  Vuex.Store({
+    //保存状态
+    state:{
+         counter: 1000
+    },
+    //state里面的属性状态或值需用mutations来改变,里面的方法必须为同步方法
+    mutations:{
+       incr(state){
+         state.counter++
+       },
+      decr(state){
+        state.counter--
+      },
+      addcr(state,count){
+        state.counter += count
+      }
+    },
+    //异步操作actions
+    actions:{
+
+    },
+    //使用getters定义方法来调用计算或逻辑结果
+    getters:{
+
+    },
+    //划分模块
+    modules:{
+
+    }
+})
+
+export default store
+
+```
+
+###### (2)、通过mutations更新
+
+```js
+<template>
+  <div id="app">
+    <h1>vue组件</h1>
+    <h2>{{this.$store.state.counter}}</h2>
+    <button @click="addCounter">+</button>
+    <button @click="delCounter">-</button>
+    <button @click="addCount(5)">+5</button>
+    <hello-vuex/>
+  </div>
+</template>
+
+<script>
+import HelloVuex from "./components/HelloVuex"
+export default {
+  name: 'App',
+  components: {
+    HelloVuex
+  },
+  methods: {
+    addCounter(){
+    //使用mutation更新state里面属性的状态
+      this.$store.commit("incr")
+    },
+    delCounter(){
+      this.$store.commit("decr")
+    },
+    addCount(count){
+      //也可传递对象，原理一样
+      this.$store.commit("addcr",count)
+    }
+  }
+}
+</script>
+
+<style>
+</style>
+
+```
+
+###### (3)、mutations提交风格
+
+```js
+//普通提交风格
+this.$store.commit("addcr",count)
+//特殊提交风格,注意：这种提交风格会把参数提交为一个对象，mutation里面的获取参数值也需要调整
+this.$store.commit({
+  type: 'addcr',
+  count
+})
+
+ //store的mutation
+ mutations:{
+      addcr(state,payload){
+        state.counter += payload.count
+      }
+    }
+```
+
+###### (4)、mutations的类型常量
+
+```
+//新建一个定义类型常量的js文件
+//定义一系列的常量
+export const ADDCR = 'addcr'
+```
+
+```js
+import {ADDCR} from './type.js'
+//store的mutation
+ mutations:{
+      [ADDCR](state,payload){
+        state.counter += payload.count
+      }
+    }
+    
+ //调用方
+ this.$store.commit(ADDCR,count)
+```
+
+##### 5、vuex-actions的使用
+
+###### (1)、actions异步操作的使用
+
+```js
+// npm install vuex@3 --save 引入
+//创建store文件夹，创建index.js文件
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new  Vuex.Store({
+    //保存状态
+    state:{
+         counter: 1000
+    },
+    //state里面的属性状态或值需用mutations来改变,里面的方法必须为同步方法
+    mutations:{
+       incr(state){
+         state.counter++
+       },
+      decr(state){
+        state.counter--
+      },
+      addcr(state,count){
+        state.counter += count
+      }
+    },
+    //异步操作actions
+    actions:{
+       //context参数相当于$store,传递参数与mutations的相似
+       asyncUpdate(context,payload){
+          setTimeout(() => {
+            context.commit('incr')
+              console.log(payload.message)
+              payload.success()
+          },1000)
+       },
+         //也可结合promise来封装，更加简洁
+        proUpdate(context,payload){
+            return new Promise((resolve,refect) =>{
+                setTimeout(() => {
+                  context.commit('incr')
+                  console.log(payload)
+                  resolve('已完成')
+              },1000)
+            })
+        }
+    }
+})
+
+export default store
+
+```
+
+```vue
+asyncUpdate<template>
+  <div id="app">
+    <h1>vue组件</h1>
+    <h2>{{this.$store.state.counter}}</h2>
+    <button @click="addCounter">+</button>
+    <hello-vuex/>
+  </div>
+</template>
+
+<script>
+import HelloVuex from "./components/HelloVuex"
+export default {
+  name: 'App',
+  components: {
+    HelloVuex
+  },
+  methods: {
+     //调用异步操作的异步方法
+    addCounter(){
+      this.$store.dispatch('asyncUpdate',{
+          message: '我的信息',
+          success:() =>{
+              console.log('已完成')
+          }
+      })
+        
+       //也可结合promise来封装，更加简洁
+        this.$store
+            .dispatch('proUpdate','我的信息')
+            .then(res =>{
+            console.log(res)
+        })
+            
+        
+    }
+      
+  }
+}
+</script>
+
+<style>
+</style>
+
+```
+
+##### 6、vue-modules模块的使用
+
+
+
+```js
+// npm install vuex@3 --save 引入
+//创建store文件夹，创建index.js文件
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+const modulesA = {
+    state:{
+         name: '张三'
+    },
+    //state里面的属性状态或值需用mutations来改变,里面的方法必须为同步方法
+    mutations:{
+       getName(state,name){
+           state.name = name
+       }
+    },
+    //异步操作actions
+    actions:{
+      asyncName(context){
+          setTimeout(() => {
+              context.commit('getName','李白')
+          },1000)
+      }
+    },
+    //使用getters定义方法来调用计算或逻辑结果
+    getters:{
+       getFunc(state){
+           return state +'yyy'
+       },
+        //调用getters里面的方法
+        getFunc1(state,getters){
+           return getters.getFunc +'kkk'
+       },
+        //调用根state的状态属性
+        getFunc2(state,getters,rootState){
+           return getters.getFunc +rootState.counter
+       }
+    }
+}
+
+const store = new  Vuex.Store({
+    //保存状态
+    state:{
+         counter: 1000
+    },
+    //state里面的属性状态或值需用mutations来改变,里面的方法必须为同步方法
+    mutations:{
+       incr(state){
+         state.counter++
+       },
+      decr(state){
+        state.counter--
+      },
+      addcr(state,count){
+        state.counter += count
+      }
+    },
+    //异步操作actions
+    actions:{
+        
+    },
+    //使用getters定义方法来调用计算或逻辑结果
+    getters:{
+
+    },
+    //划分模块
+    modules:{
+        //手动设计一个模块
+       a: modulesA
+    }
+})
+
+export default store
+
+```
+
+```vue
+getFunc<template>
+  <div id="app">
+    <h1>vue组件</h1>
+      <!--modules中的state的写法有些变化，mutations、actions与getters大差不差-->
+    <h2>{{this.$store.a.state.name}}</h2>
+    <button @click="updateName">修改</button>
+    <h2>{{this.$store.getters.getFunc}}</h2>
+    <h2>{{this.$store.getters.getFunc1}}</h2>
+    <h2>{{this.$store.getters.getFunc2}}</h2>
+      <button @click="asyncUpdateName">异步修改</button>
+    <hello-vuex/>
+  </div>
+</template>
+
+<script>
+import HelloVuex from "./components/HelloVuex"
+export default {
+  name: 'App',
+  components: {
+    HelloVuex
+  },
+  methods: {
+    updateName(){
+    //使用mutation更新state里面属性的状态
+      this.$store.commit("getName",'李四')
+    },
+    asyncUpdateName(){
+        this.$store.dispatch("asyncName")
+    }
+  }
+}
+</script>
+
+<style>
+</style>
 ```
 
