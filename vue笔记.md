@@ -2994,6 +2994,7 @@ Promise.all([
 
 ```tex
 vuex是一个专门为vue.js应用程序开发做状态管理的，相当于所有组件的状态的大管家
+npm install vuex --save //如果使用脚手架vue-cli2的话，需要注意版本，通过vuex@3来定义版本
 ```
 
 ##### 2、vuex的简单运用
@@ -3598,3 +3599,296 @@ export default {
 </style>
 ```
 
+#### 七、axios请求运用
+
+##### 1、axios的简单运用
+
+```js
+npm install axios --save //和vuex一样，需要注意版本，默认为最新版本
+
+import axios from "axios";
+axios({
+  url:'http://localhost:8081/service-web/account/login',
+  method: 'post',
+  data:{
+    username: "admin",
+    password: "admin"
+  }
+}).then(res =>{
+  console.log(res)
+})
+```
+
+##### 2、axios的并发请求
+
+```js
+//axios里面内置了Promise，天生有异步请求功能
+axios.all([axios({
+  url:'http://localhost:8081/service-web/account/list',
+  method: 'post',
+  data:{
+      username: 'admin'
+  }
+}),axios({
+  url:'http://localhost:8081/service-web/roles/list',
+  method: 'get',
+  params:{
+      name: '管理员'
+  }
+})])
+.then(results =>{
+  //对请求的结果集进行处理
+})
+.then(axios.sprend((res1,res2) =>{
+    //也可用这种方式对请求的结果集进行处理
+}))
+```
+
+##### 3、axios的实例与模块封装
+
+###### (1)、第一种封装(推荐)
+
+```js
+//创建请求request.js文件,名字随便
+import axios from 'axios'
+
+// 创建axios实例
+const service = axios.create({
+  baseURL: process.env.BASE_API, // api的base_url
+  timeout: 15000 // 请求超时时间
+})
+export default service
+```
+
+```js
+//在dev.env.js开发配置文件中加上请求ip地址,对应生产配置文件prod.env.js也是一样
+'use strict'
+const merge = require('webpack-merge')
+const prodEnv = require('./prod.env')
+
+module.exports = merge(prodEnv, {
+  NODE_ENV: '"development"',
+  BASE_API: 'http://localhost:8081/service-web'
+})
+```
+
+```js
+//对应每个模块创建对应的request请求文件，例如：
+import request from '@/utils/request'
+
+export function login(data){
+    return request({
+       url:'/account/login',
+       method: 'post',
+       data: data
+    })
+}
+
+```
+
+```vue
+
+<template>
+  <div id="app">
+    <main-tab-bar></main-tab-bar>
+    <keep-alive>
+      <router-view />
+    </keep-alive>
+    <button @click="getButton">点击登录</button>
+  </div>
+</template>
+
+<script>
+import MainTabBar from "components/MainTabBar";
+import {login} from "./api/account"
+export default {
+  name: 'App',
+  components:{
+    MainTabBar
+  },
+  methods:{
+    getButton(){
+      let data={
+        username: 'admin',
+        password: 'admin'
+      }
+      //直接使用
+      login(data).then(res =>{
+        console.log(res.data)
+      })
+    }
+  }
+}
+</script>
+
+<style>
+@import "assets/css/base.css";
+
+</style>
+
+```
+
+
+
+###### (2)、第二种封装方式
+
+```js
+//创建请求request.js文件,名字随便
+import axios from 'axios'
+
+// /第二种写法,这种方式和第一种方式一样，第一种方式模块封装的更彻底
+export function request(data){
+ const service = axios.create({
+      baseURL: process.env.BASE_API, // api的base_url
+      timeout: 15000 // 请求超时时间
+  })
+ return service(data)
+}
+
+```
+
+```js
+import {requestOne,requestTwo,requestThree,requestFour} from "./utils/requestOne"
+getButton(){
+      let data={
+        username: 'admin',
+        password: 'admin'
+      }
+      //直接使用
+       requestOne({
+        url:'/account/login',
+        method: 'post',
+        data: data
+      }).then(res =>{
+        console.log(res.data)
+      }).catch(err =>{
+        console.log(err)
+      })
+    }
+
+```
+
+###### (3)、第三种封装方式
+
+```js
+import axios from "axios";
+
+//第三种写法
+export function requestTwo(config,success,failure){
+  const service = axios.create({
+    baseURL: process.env.BASE_API, // api的base_url
+    timeout: 15000 // 请求超时时间
+  })
+  service(config).then(res =>{
+    //使用回调函数
+    success(res)
+  }).catch(err =>{
+    //使用回调函数
+    failure(err)
+  })
+}
+```
+
+```js
+getButton(){
+      let data={
+        username: 'admin',
+        password: 'admin'
+      }
+      //直接使用
+      requestTwo({
+        url:'/account/login',
+        method: 'post',
+        data: data
+      },res =>{
+        console.log(res.data)
+      },err =>{
+        console.log(err)
+      })
+}
+```
+
+###### (4)、第四种封装方式
+
+```js
+import axios from "axios";
+//第四种写法
+export function requestThree(config){
+  const service = axios.create({
+    baseURL: process.env.BASE_API, // api的base_url
+    timeout: 15000 // 请求超时时间
+  })
+  service(config.baseConfig).then(res =>{
+    //使用回调函数
+    config.success(res)
+  }).catch(err =>{
+    //使用回调函数
+    config.failure(err)
+  })
+}
+```
+
+```js
+getButton(){
+      let data={
+        username: 'admin',
+        password: 'admin'
+      }
+      //直接使用
+      requestThree({
+        baseConfig:{
+          url:'/account/login',
+          method: 'post',
+          data: data
+        },
+        success: res =>{
+          console.log(res.data)
+        },
+        failure: err =>{
+          console.log(err)
+        }
+      })
+}
+```
+
+###### (5)、第五种封装方式
+
+```js
+import axios from "axios";
+//第五种写法  也比较推荐
+export function requestFour(config){
+  return new Promise((resolve,reject) =>{
+    const service = axios.create({
+      baseURL: process.env.BASE_API, // api的base_url
+      timeout: 15000 // 请求超时时间
+    })
+    service(config).then(res =>{
+      //使用promise的resolve
+      resolve(res)
+    }).catch(err =>{
+      //使用promise的reject
+      reject(err)
+    })
+  })
+```
+
+```js
+getButton(){
+      let data={
+        username: 'admin',
+        password: 'admin'
+      }
+      //直接使用
+      requestFour({
+        url:'/account/login',
+        method: 'post',
+        data: data
+      }).then(res =>{
+        console.log(res.data)
+      }).catch(err =>{
+        console.log(err)
+      })
+}
+```
+
+##### 4、axios的拦截器
