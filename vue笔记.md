@@ -2259,7 +2259,10 @@ new Vue({
 ###### (1)、创建项目
 
 ```properties
+#基于webpack来创建
 vue create 项目名 #创建项目
+#基于vite来创建
+vue init vite-app 项目名 #创建项目
 ```
 
 ###### (2)、环境配置方式
