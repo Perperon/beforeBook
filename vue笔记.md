@@ -2230,6 +2230,93 @@ vue create 项目名 #创建项目
 .gitkeep  #不管业务文件为不为空，都是能git上远程上
 ```
 
+###### (6)、生成打包报告
+
+```properties
+1、通过命令生成打包报告
+vue-cli-service build --report #vue-cli2与vue-cli3通用
+2、通过vue的ui界面查看
+vue ui  #vue-cli3可用
+```
+
+###### (7)、vue-cli3的打包配置
+
+```js
+//vue.config.js文件
+const { defineConfig } = require('@vue/cli-service')
+module.exports = defineConfig({
+  transpileDependencies: true,
+  chainWebpack: config => {
+    config.when(process.env.NODE_ENV === 'production', config => {
+      config.entry('app').clear().add('./src/main-prod.js')
+      //通过externals配置来忽略打包，在index.html中通过cdn引入相关的外部资源，从而优化打包的大小
+      config.set('externals',{
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+        axios: 'axios',
+        lodash: '_',
+        echarts: 'echarts',
+        nprogress: 'NProgress',
+        'vue-quill-editor': 'VueQuillEditor'
+      })
+
+      //通过html-webpack-plugin插件来配置index.html加载相关资源
+      config.plugin('html').tap(args => {
+        args[0].isProd = true
+        return args
+      })
+
+    })
+
+    config.when(process.env.NODE_ENV === 'development', config => {
+      config.entry('app').clear().add('./src/main-dev.js')
+
+      //通过html-webpack-plugin插件来配置index.html加载相关资源
+      config.plugin('html').tap(args => {
+        args[0].isProd = false
+        return args
+      })
+    })
+  }
+})
+```
+
+###### (8)、通过externals加载外部CDN资源
+
+```html
+<!--结合vue-cli3的打包配置-->
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.isProd ? '':'开发模式—' %><%= htmlWebpackPlugin.options.title %></title>
+
+      <%= if(htmlWebpackPlugin.options.isProd){%>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.core.min.js">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.snow.min.js">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.4/quill.bubble.min.js">
+
+      <link rel="stylesheet" href="https://cdn.staticfile.org/vue/2.5.22/vue.min.js">
+      <link rel="stylesheet" href="https://cdn.staticfile.org/vue-router/3.0.1/vue-router.min.js">
+      <!-- *********其他的CDN引入 -->
+      <%= }%>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
+```
+
+
+
 ##### 2、compiler与only的区别
 
 ###### (1)、compiler的运行轨迹
