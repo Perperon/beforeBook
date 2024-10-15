@@ -2195,10 +2195,11 @@ module.exports = {
 
 ##### 1、vue-cli的安装
 
-###### (1)、安装vue-cli3
+###### (1)、安装/卸载vue-cli3
 
 ```properties
 npm install -g @vue/cli   #vue-cli依赖node.js与webpack  #这是脚手架3的安装方式
+npm uninstall -g @vue/cli #卸载
 ```
 
 ###### (2)、兼容vue-cli2
